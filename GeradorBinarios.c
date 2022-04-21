@@ -36,20 +36,64 @@ int main(void) {
 	printf("%x \n",mbr);
 	
 	if (ir == 0 || ir == 1) {
-		
-	};
-	if (ir >= 2 && ir <= 10){
-		
-	};
-	if (ir == 11) {
-		
-	};
-	if (ir >= 12 && ir <= 18){
-		
-	};
-	if (ir == 19 || ir == 20) {
+		if (ir == 1){
+			pc += 4;
+		}	
+	}
+	else if (ir >= 2 && ir <= 10){
 		ro0 = ((mbr & 0xe00000) >> 21);
-		mar = (mbr & 0x1ffff);
+		ro1 = ((mbr & 0x1c0000) >> 18);
+		if (ir == 2) {
+			reg[ro0] = reg[ro0] + reg[ro1];
+		} else if (ir == 3) {
+			reg[ro0] = reg[ro0] - reg[ro1];
+		} else if (ir == 4) {
+			reg[ro0] = reg[ro0] * reg[ro1];
+		} else if (ir == 5) {
+			reg[ro0] = reg[ro0] / reg[ro1];
+		} else if (ir == 6) {
+			if (reg[ro0] == reg[ro1]){
+				e = 0x0001;
+			} else {
+				e = 0x0000;
+			};
+			if (reg[ro0] < reg[ro1]){
+				l = 0x0001;
+			} else {
+				l = 0x0000;
+			};
+			if (reg[ro0] > reg[ro1]){
+				g = 0x0001;
+			} else {
+				g = 0x0000;
+			};
+		} else if (ir == 7) {
+			reg[ro0] = reg[ro1];
+		} else if (ir == 8) {
+			reg[ro0] = (reg[ro0] & reg[ro1]);
+		} else if (ir == 9) {
+			reg[ro0] = (reg[ro0] | reg[ro1]);
+		} else if (ir == 10) {
+			reg[ro0] = (reg[ro0] ^ reg[ro1]);
+		}					
+	}
+	else if (ir == 11) {
+		ro0 = ((mbr & 0xe00000) >> 21);
+		reg[ro0] = !reg[ro0];
+	}
+	else if (ir >= 12 && ir <= 18){
+		mar = (mbr & 0x1fffff);
+		
+		if (ir == 12) {
+			if (e == 0x01) {
+				pc = mar;
+			};
+		}
+		
+	}
+	else if (ir == 19 || ir == 20) {
+		ro0 = ((mbr & 0xe00000) >> 21);
+		mar = (mbr & 0x1fffff);
 		printf("%x \n", mar);
 		printf("entrei no if \n");
 		printf("%d \n", mar);
@@ -90,7 +134,7 @@ int main(void) {
   	i = 1;
   	while (!feof(arq))
   	{
-		result = fgets(Linha, 100, arq);  // o 'fgets' lê até 99 caracteres ou até o '\n'
+		result = fgets(Linha, 100, arq);  // o 'fgets' lÃª atÃ© 99 caracteres ou atÃ© o '\n'
       	if (result){
 		  	printf("Linha %d : %s",i,Linha);
       		i++;	
