@@ -2,14 +2,16 @@
 #include <stdlib.h>
 
 int main(void) {
-	
-	//char teste = 0x05;
-	//printf("%d",teste);
-	
+
 	unsigned int mbr, mar, imm, pc, reg[8];
 	unsigned char ir, ro0, ro1, e, l, g, memoria[154];
 	
 	pc = 0x00;
+
+	/* 
+	Valores carregados na memoria apenas para testes
+	um programa para fazer a codificação dos bits baseados em texto e necessario
+	*/
 	
 	memoria[0] = 0x13;
 	memoria[1] = 0x20;
@@ -29,7 +31,7 @@ int main(void) {
 		
 	//printf("%x",ir);
 	//printf("%x",mbr);
-	/// descodifica
+	///descodifica
 	///teste da fase inicial 
 	ir = (mbr >> 24);
 	//ir = memoria[0];
@@ -88,16 +90,39 @@ int main(void) {
 			if (e == 0x01) {
 				pc = mar;
 			};
-		}
-		
+		} else if (ir == 13) {
+			if (e == 0x00) {
+				pc = mar;
+			};
+		} else if (ir == 14) {
+			if (l == 0x01) {
+				pc = mar;
+			};
+		} else if (ir == 15) {
+			if (e == 0x01 || l == 0x01) {
+				pc = mar;
+			};
+		} else if (ir == 16) {
+			if (g == 0x01) {
+				pc = mar;
+			};
+		} else if (ir == 17) {
+			if (e == 0x01 || g == 0x01) {
+				pc = mar;
+			};
+		} else if (ir == 18) {
+			pc = mar;
+		};	
 	}
 	else if (ir == 19 || ir == 20) {
 		ro0 = ((mbr & 0xe00000) >> 21);
 		mar = (mbr & 0x1fffff);
-		printf("%x \n", mar);
-		printf("entrei no if \n");
-		printf("%d \n", mar);
-		printf("%d \n", ro0);
+		
+		//printf("%x \n", mar);
+		//printf("entrei no if \n");
+		//printf("%d \n", mar);
+		//printf("%d \n", ro0);
+		
 		if (ir == 19) {
 			printf("entrei no segundo \n");
 			mbr = memoria[mar++];
@@ -105,41 +130,37 @@ int main(void) {
 			mbr = (mbr << 8) | memoria[mar++];
 			mbr = (mbr << 8) | memoria[mar++];
 			reg[ro0] = mbr;
-			pc += 4;
+			//pc += 4;
 			printf("%x", reg[ro0]);
+		} else if (ir == 20) {
+			
 		};
 		
 		//ro0 = (mbr & 0x00e00000) >> 21;
 		//mar = mbr & 0x001fffff;
+	} else if (ir >= 21 && ir <= 27) {
+		ro0 = ((mbr & 0xe00000) >> 21);
+		imm = (mbr & 0x1fffff);
+		
+		if (ir == 21) {
+			reg[ro0] = imm;
+		} else if (ir == 22) {
+			reg[ro0] = (reg[ro0] + imm);
+		} else if (ir == 23) {
+			reg[ro0] = (reg[ro0] - imm);
+		} else if (ir == 24) {
+			reg[ro0] = (reg[ro0] * imm);
+		} else if (ir == 25) {
+			reg[ro0] = (reg[ro0] / imm);
+		} else if (ir == 26) {
+			reg[ro0] = (reg[ro0] << imm);
+		} else if (ir == 27) {
+			reg[ro0] = (reg[ro0] >> imm);
+		};
 	};
 	
 	//printf("%x", reg[1], "\n MBR: %x", mbr, "%x \n MAR: ", mar);
 	
-	//executa
+	// falta implemtar um controle de execução e imcrementação do PC
 	
-	
-/*	FILE *arq;
-	char Linha[150];
-	char *result;
-  	int i;
-	
-	arq = fopen("teste.txt", "rt");
-
-  	if (arq == NULL)
- 	{
-    	printf("Problemas na abertura do arquivo\n");
-    	return;
-	}
-
-  	i = 1;
-  	while (!feof(arq))
-  	{
-		result = fgets(Linha, 100, arq);  // o 'fgets' lê até 99 caracteres ou até o '\n'
-      	if (result){
-		  	printf("Linha %d : %s",i,Linha);
-      		i++;	
-		  }
-  }
-  
-  fclose(arq);*/
 }
