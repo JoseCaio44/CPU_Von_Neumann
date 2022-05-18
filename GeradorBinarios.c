@@ -414,7 +414,8 @@ int main (void) {
 			}
 		} else if (aux == 2) {
 			while(teste < 154){
-				printf("Posicao %d : %x \n", teste, memoria[teste++]);
+				printf("Posicao %d : %x \n", teste, memoria[teste]);
+				teste++;
 			};
 		} else {
 			break;
